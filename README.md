@@ -1,4 +1,4 @@
-#About this app
+# About this app
 This app is for displaying top 20 SpaceX latest launches in 2018
 
 ## Instructions of usage
@@ -8,4 +8,7 @@ This app is for displaying top 20 SpaceX latest launches in 2018
 4. run `$ yarn start` to start the app
 5. if not automatically taken to the browser, go to http://localhost:3000
 
-##Enjoy!
+### Running Tests
+In your terminal in the root folder, run `yarn test`
+
+#### Enjoy!
