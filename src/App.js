@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-
-import {Link} from 'react-router-dom'
+import {Redirect} from 'react-router-dom'
 
 import {connect} from "react-redux"
 import { getLaunches } from "./actions/launchActions";
@@ -29,6 +27,14 @@ class App extends Component {
     const { currentPage, totalPages, currentLaunches, urlPageNumber } = data;
     this.setState({ currentPage, currentLaunches, totalPages, urlPageNumber });
   };
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevProps.location !== this.props.location) {
+  //     this.onPageChanged()
+  //   }
+  // }
+
+  
 
   render() {
     const {launches} = this.props
@@ -93,11 +99,7 @@ class App extends Component {
             }
 
             {!launches.inProgress && (urlPageNumber > totalPages) &&
-              <div className="text-center">
-                <hr />
-              <p>404 page {urlPageNumber} not found </p>
-              <Link to='/'>Go to List</Link>
-              </div>
+              <Redirect to='/404' />
             }
 
             {launches.inProgress && 

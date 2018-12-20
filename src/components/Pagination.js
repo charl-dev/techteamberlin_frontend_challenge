@@ -5,17 +5,6 @@ import {chunk} from 'lodash';
 class Pagination extends Component {
   constructor(props) {
     super(props);
-    // const { totalRecords = null, pageLimit = 30, pageNeighbours = 0 } = props;
-
-    // this.pageLimit = typeof pageLimit === "number" ? pageLimit : 30;
-    // this.totalRecords = typeof totalRecords === "number" ? totalRecords : 0;
-
-    // this.pageNeighbours =
-    //   typeof pageNeighbours === "number"
-    //     ? Math.max(0, Math.min(pageNeighbours, 2))
-    //     : 0;
-
-    // this.totalPages = Math.ceil(this.totalRecords / this.pageLimit);
     this.pageLimit = props.limit
     this.totalRecords = props.all_launches
 
@@ -44,8 +33,6 @@ class Pagination extends Component {
       let params = new URLSearchParams(this.props.location.search); // requires modern browsers
       currentPage = parseInt(params.get('page'), 10)-1
     }
-
-    // console.log('here is the param', parseInt(params.get('page'), 10));
     
     this.gotoPage(currentPage);
   }
@@ -70,31 +57,8 @@ class Pagination extends Component {
   };
 
   handleClick = (page, evt) => {
-    // evt.preventDefault();
-    // const {history} = this.props
-
-    // let location = {
-    //   pathname: '/',
-    //   search: '?page='+page
-    // }
-
-    console.log("current location", this.props);
-    
-
-    // history.replace(location)
-
     this.gotoPage(page);
   };
-
-  // handleMoveLeft = evt => {
-  //   evt.preventDefault();
-  //   this.gotoPage(this.state.currentPage - this.pageNeighbours * 2 - 1);
-  // };
-
-  // handleMoveRight = evt => {
-  //   evt.preventDefault();
-  //   this.gotoPage(this.state.currentPage + this.pageNeighbours * 2 + 1);
-  // };
 
   render() {
     if (!this.totalRecords) return null;
