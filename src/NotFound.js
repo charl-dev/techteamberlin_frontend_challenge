@@ -18,8 +18,8 @@ export default class NotFound extends Component {
                         </h4>
                         <hr />
                         <div className="text-center">
-                            <p>404 - page not found </p>
-                            <p><Link to='/?page=1'>Go to List</Link></p>
+                            <p><i className="fa fa-exclamation-triangle"/> 404 - page not found </p>
+                            <p><Link to='/?page=1'>Go to page 1</Link></p>
                         </div>
                     </div>
                 </div>
