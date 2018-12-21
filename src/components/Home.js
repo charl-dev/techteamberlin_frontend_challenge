@@ -5,6 +5,9 @@ import {connect} from "react-redux"
 import { getLaunches } from "../actions/launchActions";
 import Pagination from "./Pagination";
 
+import {sortBy} from 'lodash'
+import { getUrlQuery } from "../helpers/helperFunctions";
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -14,15 +17,27 @@ class App extends Component {
       currentPage: null,
       totalPages: null,
       urlPageNumber: null,
-      searchResults: null
+      searchResults: null,
+      isDesc: false,
+      arrFl: false,
+      arrMn: false
     };
 
     props.dispatch(getLaunches())
   }
 
   componentDidMount() {
-    let queryString = new URLSearchParams(this.props.location.search)
-    console.log('these are the props', queryString.get('term'), this.props)
+    if(getUrlQuery('sort', this.props.location)){
+      this.setState({isDesc: getUrlQuery('sort', this.props.location) === 'desc' ? false : true})
+    }
+
+    // to show the sorting arrows
+    if(getUrlQuery('sort', this.props.location)){
+      this.setState({
+        arrFl: getUrlQuery('column', this.props.location) === 'flight-number' ? true : false,
+        arrMn: getUrlQuery('column', this.props.location) === 'mission-name' ? true : false,
+      })
+    }
   }
 
   onPageChanged = data => {
@@ -30,21 +45,31 @@ class App extends Component {
     this.setState({ currentPage, currentLaunches, totalPages, urlPageNumber });
   };
 
-  // _onEnterPressed = (e) => {
-  //   const {history} = this.props
-  //   if (e.key === 'Enter') {
-  //     history.push({pathname:'/search', search:'?term='+e.target.value})
-  //     console.log('do validate... here is the value', e.target.value, this.props );
-  //   }
-  // }
+  //called when table header is clicked
+  _handleSort = (data, sortType, column) => {
+    const {history, location} = this.props
+
+    let clickedColumn = column === 1 ? 'flight_number' : 'mission_name'
+
+    this.setState({
+      arrFl: column === 1 ? true: false,
+      arrMn: column === 2 ? true: false,
+      isDesc: !sortType,
+      currentLaunches: this.state.isDesc ? sortBy(data, [clickedColumn]).reverse() : sortBy(data, [clickedColumn])
+    })
+    let pageQuery = getUrlQuery('page', location)
+    let hasSearch=pageQuery?'page='+pageQuery+'&':'?';
+
+    history.replace({
+      pathname:location.path,
+      search: hasSearch+'column='+(column===1?'flight-number':'mission-name')+'&sort='+(this.state.isDesc?'desc':'asc')
+    })
+
+  }
 
   render() {
     const {launches} = this.props
-    const {currentPage, currentLaunches, totalPages, urlPageNumber} = this.state
-
-    console.log("current page.....", currentPage)
-    console.log("total pages.....", totalPages)
-
+    const {currentPage, currentLaunches, totalPages, urlPageNumber, isDesc, arrFl, arrMn} = this.state
     return (
             <div>
             {!launches.inProgress && (urlPageNumber <= totalPages) &&
@@ -52,8 +77,12 @@ class App extends Component {
               <table className="table">
                 <thead>
                   <tr>
-                    <th scope="col">Flight Number</th>
-                    <th scope="col">Mission Name</th>
+                    <th scope="col" onClick={this._handleSort.bind(this,currentLaunches, isDesc, 1)}>
+                      Flight Number {arrFl && <i className={`fa fa-long-arrow-alt-${isDesc ? 'up':'down'}`}/>}
+                    </th>
+                    <th scope="col" onClick={this._handleSort.bind(this,currentLaunches, isDesc, 2)}>
+                      Mission Name {arrMn && <i className={`fa fa-long-arrow-alt-${isDesc ? 'up':'down'}`}/>}
+                    </th>
                     <th scope="col">Rocket Name</th>
                   </tr>
                 </thead>
@@ -73,8 +102,8 @@ class App extends Component {
                 all_launches={launches.all_launches} 
                 onPageChanged={this.onPageChanged} 
                 location={this.props.location}
-                descrText={`${currentPage+1} of ${totalPages} Pages`}
-                limit={5}/>
+                descrText={`${currentPage+1} of ${totalPages} Pages - (10 items per page)`}
+                limit={10}/>
               </div>
             }
 

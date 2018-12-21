@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import {Link} from 'react-router-dom';
-import {chunk} from 'lodash';
+import {chunk, sortBy} from 'lodash';
+import { getUrlQuery } from "../helpers/helperFunctions";
 
 class Pagination extends Component {
   constructor(props) {
@@ -28,9 +29,10 @@ class Pagination extends Component {
     // check params
 
     let currentPage = 0;
-    if(this.props.location.search){
-      let params = new URLSearchParams(this.props.location.search); // requires modern browsers
-      currentPage = parseInt(params.get('page'), 10)-1
+
+
+    if(getUrlQuery('page', this.props.location)){
+      currentPage = parseInt(getUrlQuery('page', this.props.location), 10)-1
     }
     
     this.gotoPage(currentPage);
@@ -40,20 +42,35 @@ class Pagination extends Component {
     const { onPageChanged = f => f } = this.props;
 
     const currentPage = Math.max(0, Math.min(page, this.totalPages));
-    const currentLaunches = this.state.inChunks[page]
+    let currentLaunches = this.state.inChunks[page]
+
+    if(getUrlQuery('sort', this.props.location) || getUrlQuery('column', this.props.location)){
+      let sortType =  getUrlQuery('sort', this.props.location) === 'desc' ? true : false
+      let column =  getUrlQuery('column', this.props.location) === 'mission-name' ? 2 : 1
+      // console.log("Helllooooooo", currentLaunches, getUrlQuery('column', this.props.location));
+      currentLaunches = this._handleSort(currentLaunches, sortType, column)
+    }
+    
     const urlPageNumber = page
 
+    //this data will be passed to the parent
     const paginationData = {
       currentPage,
       currentLaunches,
       urlPageNumber,
       totalPages: this.totalPages,
       pageLimit: this.pageLimit,
-      totalRecords: this.totalRecords
+      totalRecords: this.totalRecords,
     };
 
     this.setState({ currentPage }, () => onPageChanged(paginationData));
   };
+
+  //hand sorting on the page
+  _handleSort = (data, isDesc, column) => {
+    let clickedColumn = column === 1 ? 'flight_number' : 'mission_name'
+    return isDesc ? sortBy(data, [clickedColumn]).reverse() : sortBy(data, [clickedColumn])
+  }
 
   handleClick = (page, evt) => {
     this.gotoPage(page);

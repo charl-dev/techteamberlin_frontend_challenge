@@ -1,13 +1,9 @@
 import React, { Component } from "react";
-import {withRouter, Route, BrowserRouter as Router} from 'react-router-dom'
-
-import {connect} from "react-redux"
-import { getLaunches } from "../actions/launchActions";
-// import Pagination from "./components/Pagination";
-import App from "../components/Home";
+import {withRouter, Route} from 'react-router-dom'
+import Home from "../components/Home";
 import NotFound from "../components/NotFound";
 import Search from "../components/Search";
-import getSearchTerm from "../helpers/GetUrlQuery";
+import {getSearchTerm} from "../helpers/helperFunctions";
 
 class Main extends Component {
 
@@ -22,7 +18,7 @@ class Main extends Component {
     const {history} = this.props
     if (e.key === 'Enter') {
         history.push({pathname:'/search', search:'?term='+e.target.value.trim()})
-        console.log('do validate... here is the value', e.target.value, this.props );
+        // console.log('do validate... here is the value', e.target.value, this.props );
     }
   }
 
@@ -59,7 +55,7 @@ class Main extends Component {
                     </div>
                     
 
-                    <Route exact path="/" component={App} />
+                    <Route exact path="/" component={Home} />
                     <Route path="/404" component={NotFound} />
                     <Route path="/search" component={Search} />
 

@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import { getLaunches } from '../actions/launchActions';
 
 import { Redirect, Link } from 'react-router-dom';
-import getSearchTerm from '../helpers/GetUrlQuery'
+import {getSearchTerm} from '../helpers/helperFunctions'
 
 
 class Search extends Component {
@@ -38,7 +38,6 @@ class Search extends Component {
 
         //when a search is perfomed on search results page...
         if(prevProps.location !== this.props.location){
-            
             this._getSearchResults(all_launches, getSearchTerm(this.props.location))
         }
     }
