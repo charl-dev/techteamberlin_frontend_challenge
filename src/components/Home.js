@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import {Redirect} from 'react-router-dom'
 
 import {connect} from "react-redux"
-import { getLaunches } from "./actions/launchActions";
-import Pagination from "./components/Pagination";
+import { getLaunches } from "../actions/launchActions";
+import Pagination from "./Pagination";
 
 class App extends Component {
   constructor(props) {
@@ -13,14 +13,16 @@ class App extends Component {
       currentLaunches: [],
       currentPage: null,
       totalPages: null,
-      urlPageNumber: null
+      urlPageNumber: null,
+      searchResults: null
     };
 
     props.dispatch(getLaunches())
   }
 
   componentDidMount() {
-    console.log('these are the props', this.props)
+    let queryString = new URLSearchParams(this.props.location.search)
+    console.log('these are the props', queryString.get('term'), this.props)
   }
 
   onPageChanged = data => {
@@ -28,13 +30,13 @@ class App extends Component {
     this.setState({ currentPage, currentLaunches, totalPages, urlPageNumber });
   };
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (prevProps.location !== this.props.location) {
-  //     this.onPageChanged()
+  // _onEnterPressed = (e) => {
+  //   const {history} = this.props
+  //   if (e.key === 'Enter') {
+  //     history.push({pathname:'/search', search:'?term='+e.target.value})
+  //     console.log('do validate... here is the value', e.target.value, this.props );
   //   }
   // }
-
-  
 
   render() {
     const {launches} = this.props
@@ -44,30 +46,7 @@ class App extends Component {
     console.log("total pages.....", totalPages)
 
     return (
-      <div className="container">
-        <div className="row justify-content-md-center">
-          <div
-            className="col-8 shadow rounded"
-            style={{ marginTop: 64, marginBottom: 64 }}
-          >
-            <h4 style={{ marginTop: 20 }}>
-              <img
-                src={require("./logo.png")}
-                className="responsive-img"
-                alt="SpaceX Logo"
-                width={150}
-              />
-              <small className="text-muted"> | Top 20 launches of 2018</small>
-            </h4>
-            <hr />
-
-            <div className= "form-group row">
-              <label className="col-sm-2 col-form-label">Search</label>
-              <div className="col-sm-10">
-                <input type="text" className="form-control float-right"/>
-              </div>
-            </div>
-            
+            <div>
             {!launches.inProgress && (urlPageNumber <= totalPages) &&
               <div>
               <table className="table">
@@ -94,6 +73,7 @@ class App extends Component {
                 all_launches={launches.all_launches} 
                 onPageChanged={this.onPageChanged} 
                 location={this.props.location}
+                descrText={`${currentPage+1} of ${totalPages} Pages`}
                 limit={5}/>
               </div>
             }
@@ -105,10 +85,7 @@ class App extends Component {
             {launches.inProgress && 
               <p className="text-center">Loading...</p>
             }
-
           </div>
-        </div>
-      </div>
     );
   }
 }

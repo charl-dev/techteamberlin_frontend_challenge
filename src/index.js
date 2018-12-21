@@ -3,19 +3,20 @@ import ReactDOM from "react-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'font-awesome/css/font-awesome.min.css';
 import {BrowserRouter, Route} from 'react-router-dom'
-import App from "./App";
+import App from "./components/Home";
 import * as serviceWorker from "./serviceWorker";
 
 import {Provider} from 'react-redux'
 import configureStore from './utils/configureStore';
-import NotFound from "./NotFound";
+import NotFound from "./components/NotFound";
+import Search from "./components/Search";
+import Main from "./Layouts/Main";
 const store = configureStore()
 
 ReactDOM.render(
   <BrowserRouter>
     <Provider store={store}>
-        <Route exact path="/" component={App} />
-        <Route path="/404" component={NotFound} />
+      <Main />
     </Provider>
   </BrowserRouter>, document.getElementById('root'));
 

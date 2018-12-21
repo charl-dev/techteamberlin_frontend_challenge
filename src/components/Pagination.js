@@ -21,7 +21,6 @@ class Pagination extends Component {
       inChunks: inChunks,
       pages : pages
     };
-
     
   }
 
@@ -65,14 +64,13 @@ class Pagination extends Component {
 
     if (this.totalPages === 1) return null;
 
-
-    // console.log(this.state)
     const {pages, currentPage} = this.state
 
     return (
       <Fragment>
         <hr />
         <nav aria-label="pagination for launches">
+          <p className="float-left">{this.props.descrText}</p>
           <ul className="pagination justify-content-end">
             {pages.map(page => 
             
